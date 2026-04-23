@@ -314,7 +314,8 @@ body{font-family:'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif
     <div class="result-info-grid" id="res-info-grid"></div>
     <div id="res-q-list"></div>
   </div>
-  <div class="result-actions">
+  <div class="result-actions" style="flex-direction:column;align-items:center;gap:12px">
+    <div id="drive-status" style="display:none;font-size:14px;font-weight:600;padding:10px 20px;background:#f8fafc;border-radius:8px;border:1px solid var(--border)"></div>
     <button class="btn-pdf" id="btn-pdf" onclick="doPrint()">📄 PDF 출력</button>
   </div>
 </div>
@@ -1344,8 +1345,10 @@ function doSubmit() {
   submitted = true;
   submitTime = new Date();
   clearInterval(timerInterval);
-  downloadAnswers();
+  const payload = buildPayload();
+  downloadAnswers(payload);
   showResults();
+  uploadToDrive(payload);
 }
 function autoSubmit() {
   saveCurrentEssay();
@@ -1358,19 +1361,57 @@ function autoSubmit() {
 }
 function closeTimeup() {
   document.getElementById('timeup-modal').classList.remove('show');
-  downloadAnswers();
+  const payload = buildPayload();
+  downloadAnswers(payload);
   showResults();
+  uploadToDrive(payload);
+}
+
+// ============================================================
+//  GOOGLE DRIVE ENDPOINT (apps-script.gs 배포 후 URL 입력)
+// ============================================================
+const DRIVE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxCmjbLAoSlqH7lxOCWVdlJX7JfxRcr2MZcqcRmj7UXH1s2Mhu2g5RX8uusMFf12g/exec';
+
+async function uploadToDrive(payload) {
+  if (!DRIVE_ENDPOINT) return 'no-endpoint';
+  setDriveStatus('sending');
+  try {
+    await fetch(DRIVE_ENDPOINT, {
+      method: 'POST',
+      mode: 'no-cors',      // CORS 우회 (응답은 opaque이나 전송은 정상 처리됨)
+      body: JSON.stringify(payload)
+    });
+    setDriveStatus('ok');
+    return 'ok';
+  } catch (err) {
+    console.warn('Drive upload error:', err);
+    setDriveStatus('fail');
+    return 'fail';
+  }
+}
+
+function setDriveStatus(state) {
+  const el = document.getElementById('drive-status');
+  if (!el) return;
+  const msgs = {
+    sending: { ko:'📤 구글 드라이브 전송 중...', en:'📤 Sending to Google Drive...', zh:'📤 正在上传至Google Drive...' },
+    ok:      { ko:'✅ 구글 드라이브 저장 완료', en:'✅ Saved to Google Drive', zh:'✅ 已保存至Google Drive' },
+    fail:    { ko:'⚠️ 드라이브 전송 실패 (로컬 파일로 대체됨)', en:'⚠️ Drive upload failed (local file saved)', zh:'⚠️ 上传失败（已保存本地文件）' }
+  };
+  const colors = { sending:'#d97706', ok:'#16a34a', fail:'#dc2626' };
+  el.textContent = (msgs[state] || {})[currentLang] || msgs[state].ko;
+  el.style.color = colors[state];
+  el.style.display = 'block';
 }
 
 // ============================================================
 //  ANSWER AUTO-DOWNLOAD
 // ============================================================
-function downloadAnswers() {
+function buildPayload() {
   const qs = L().questions;
   const langNames = {ko:'한국어',en:'English',zh:'中文'};
   const elapsed = 1800 - remainingSeconds;
-
-  const payload = {
+  return {
     meta: {
       exam: '경영통계 003분반 중간고사',
       studentId: studentId,
@@ -1397,7 +1438,9 @@ function downloadAnswers() {
       };
     })
   };
+}
 
+function downloadAnswers(payload) {
   try {
     const json = JSON.stringify(payload, null, 2);
     const blob = new Blob(['﻿' + json], {type: 'application/json;charset=utf-8'});
