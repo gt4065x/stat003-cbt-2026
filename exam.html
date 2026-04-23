@@ -30,7 +30,15 @@ body{font-family:'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif
 .btn-primary{background:var(--primary);color:#fff;width:100%;margin-top:8px;font-size:16px}
 .btn-primary:hover{background:var(--primary-h)}
 .error-msg{color:var(--danger);font-size:13px;margin-top:10px;min-height:20px}
-.login-info{margin-top:20px;padding:12px;background:#f8fafc;border-radius:6px;font-size:12px;color:var(--muted);text-align:left}
+.login-info{margin-top:20px;padding:12px 14px;background:#f8fafc;border-radius:6px;font-size:12px;color:var(--muted);text-align:left;line-height:2}
+.login-title-tri{font-size:15px;font-weight:800;color:var(--primary);margin-bottom:6px;line-height:1.7;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:4px}
+.tri-ko{font-size:18px}
+.tri-en{font-size:13px;color:var(--primary-l)}
+.tri-zh{font-size:13px;color:var(--primary-l)}
+.tri-sep{color:var(--border);font-weight:300;font-size:14px}
+.subtitle-tri{color:var(--muted);font-size:12px;margin-bottom:24px;text-align:center}
+.label-tri{display:block;font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px}
+.label-sub{font-size:11px;color:var(--muted);font-weight:400}
 
 /* ===== LANGUAGE ===== */
 #screen-lang{min-height:100vh;align-items:center;justify-content:center;background:linear-gradient(135deg,#1e40af 0%,#60a5fa 100%)}
@@ -201,21 +209,50 @@ body{font-family:'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif
 <!-- ===== LOGIN ===== -->
 <div id="screen-login" class="screen active">
   <div class="login-card">
-    <div class="uni-badge">우송대학교 AI경영학과</div>
-    <h1 id="lt-title">경영통계 중간고사</h1>
-    <p class="subtitle" id="lt-sub">003분반 &nbsp;·&nbsp; 2026학년도 1학기</p>
+    <div class="uni-badge">우송대학교 AI경영학과 &nbsp;·&nbsp; Woosong Univ. &nbsp;·&nbsp; 우송大学校</div>
+
+    <!-- 제목 3개 언어 병기 -->
+    <h1 class="login-title-tri">
+      <span class="tri-ko">경영통계 중간고사</span>
+      <span class="tri-sep">|</span>
+      <span class="tri-en">Business Statistics Midterm</span>
+      <span class="tri-sep">|</span>
+      <span class="tri-zh">经营统计期中考试</span>
+    </h1>
+
+    <!-- 학기 정보 3개 언어 병기 -->
+    <p class="subtitle-tri">
+      003분반 &nbsp;·&nbsp; Section 003 &nbsp;·&nbsp; 003班级 &nbsp;·&nbsp; 2026
+    </p>
+
+    <!-- 학번 입력 -->
     <div class="form-group">
-      <label id="lt-id-label">학번</label>
-      <input id="inp-id" type="text" id="inp-id" autocomplete="off" placeholder="학번을 입력하세요">
+      <label class="label-tri">
+        학번 &nbsp;<span class="label-sub">/ Student ID / 学号</span>
+      </label>
+      <input id="inp-id" type="text" autocomplete="off"
+             placeholder="학번 / Student ID / 学号">
     </div>
+
+    <!-- 비밀번호 입력 -->
     <div class="form-group">
-      <label id="lt-pw-label">비밀번호</label>
-      <input id="inp-pw" type="password" autocomplete="off" placeholder="비밀번호를 입력하세요">
+      <label class="label-tri">
+        비밀번호 &nbsp;<span class="label-sub">/ Password / 密码</span>
+      </label>
+      <input id="inp-pw" type="password" autocomplete="off"
+             placeholder="비밀번호 / Password / 密码">
     </div>
-    <button class="btn btn-primary" id="lt-btn" onclick="doLogin()">로그인</button>
+
+    <button class="btn btn-primary" onclick="doLogin()">
+      로그인 &nbsp;/&nbsp; Login &nbsp;/&nbsp; 登录
+    </button>
     <div class="error-msg" id="login-err"></div>
-    <div class="login-info" id="lt-info">
-      📌 공통 비밀번호를 입력하세요.<br>시험 시작 후 30분의 제한시간이 주어집니다.
+
+    <!-- 안내 3개 언어 병기 -->
+    <div class="login-info">
+      📌 <strong>공통 비밀번호를 입력하세요.</strong> 시험 시작 후 30분 제한.<br>
+      📌 <strong>Enter the common exam password.</strong> 30-min time limit.<br>
+      📌 <strong>请输入统一考试密码。</strong> 考试限时30分钟。
     </div>
   </div>
 </div>
@@ -965,7 +1002,8 @@ const STUDENTS = {
   '202610084': '이건희',
   '202610095': '임찬',
   '202610099': '최민규',
-  '202612083': 'Nguyen Viet Cuong'
+  '202612083': 'Nguyen Viet Cuong',
+  '20121039':  '김형태'
 };
 
 // ============================================================
